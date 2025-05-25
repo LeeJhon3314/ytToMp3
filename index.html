@@ -1,0 +1,38 @@
+<body>
+  <h2>YT 轉 MP3</h2>
+  <input type="text" id="urlInput" placeholder="貼上 YouTube 連結"><br><br>
+
+  <input type="text" id="pathInput" placeholder="預設：下載資料夾" readonly>
+  <button onclick="chooseFolder()">選擇下載目錄</button><br><br>
+
+  <button onclick="convert()">下載 MP3</button><br><br>
+
+  <p id="status"></p>
+
+  <script>
+    document.getElementById('pathInput').value = window.api.getDefaultDownloadPath();
+
+    async function chooseFolder() {
+      const selected = await window.api.selectFolder();
+      if (selected) {
+        document.getElementById('pathInput').value = selected;
+      }
+    }
+
+    async function convert() {
+      const url = document.getElementById('urlInput').value.trim();
+      const path = document.getElementById('pathInput').value.trim();
+      if (!url) {
+        alert('請輸入影片連結');
+        return;
+      }
+      document.getElementById('status').textContent = '處理中...';
+      try {
+        const result = await window.api.fetchConvert(url, path);
+        document.getElementById('status').textContent = result;
+      } catch (e) {
+        document.getElementById('status').textContent = e.message;
+      }
+    }
+  </script>
+</body>
